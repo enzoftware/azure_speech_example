@@ -52,9 +52,9 @@
             tflag = gettoken();
             tflag = false;
         }
-        
+
     };
-    
+
     function gettoken(){
         var request = new XMLHttpRequest();
         request.open('POST', '/gettoken', true);
@@ -65,12 +65,12 @@
             const data = JSON.parse(request.responseText);
             at = data.at;
         }
-        
+
         //send request
         request.send();
         return false;
     }
-    
+
     function playword(k){
         var audio = document.getElementById('ttsaudio');
         audio.playbackRate = 0.5;
@@ -81,22 +81,22 @@
         if(k != offsetsarr.length -1){
             stopafter = (offsetsarr[k+1]/1000) + 0.01;
         }
-        
+
         audio.play();
 
         var pausing_function = function(){
             if(this.currentTime >= stopafter) {
                 this.pause();
                 this.currentTime = 0;
-                stopafter = 10000;        
+                stopafter = 10000;
                 // remove the event listener after you paused the playback
                 this.removeEventListener("timeupdate",pausing_function);
                 audio.playbackRate = 0.9;
             }
         };
-        
+
         audio.addEventListener("timeupdate", pausing_function);
-       
+
     }
 
     function playwordind(word){
@@ -108,7 +108,7 @@
                 audio.src = wordaudiourls[i].objectUrl;
                 audio.playbackRate = 0.7;
                 audio.play();
-                break;    
+                break;
             }
         }
 
@@ -118,7 +118,7 @@
             audio.autoplay = false;
             audio.removeEventListener("ended",ending_function);
         };
-        
+
         audio.addEventListener("ended", ending_function);
     }
 
@@ -127,7 +127,7 @@
     function handleWordClick(){
         const activeTextarea = document.activeElement;
         var k=activeTextarea.selectionStart;
-        
+
         reftextval = reftext.value;
         wordlist = reftextval.split(" ");
 
@@ -144,7 +144,7 @@
           }
 
     }
-    
+
     var soundAllowed = function (stream) {
         permission = true;
         audioContent = new AudioContext();
@@ -164,7 +164,7 @@
     //function for onclick of hear pronunciation button
     hbutton.onclick = function () {
         reftextval = reftext.value;
-        
+
         if(reftextval != lastgettstext){
             document.getElementById("ttsloader").style.display = "block";
 
@@ -182,29 +182,29 @@
 
                 var au = document.createElement('audio');
                 var li = document.createElement('p');
-            
+
                 //add controls to the <audio> element
                 au.controls = true;
                 au.autoplay = true;
                 au.id = "ttsaudio"
                 au.src = objectUrlMain;
-            
+
                 //add the new audio element to li
                 li.appendChild(au);
-                    
+
                 //add the li element to the ol
-                
+
                 if(ttsList.hasChildNodes()){
                     ttsList.lastChild.remove();
                 }
-                
+
                 ttsList.appendChild(li);
 
                 document.getElementById("ttsloader").style.display = "none";
             }
             const dat = new FormData();
-            dat.append("reftext",reftextval);    
-            
+            dat.append("reftext",reftextval);
+
             //send request
             request.send(dat);
 
@@ -214,7 +214,7 @@
             for (var i = 0; i < wordlist.length; i++) {
                 getttsforword(wordlist[i]);
             }
-            
+
         }
         else{
             console.log("TTS Audio for given text already exists. You may change ref text");
@@ -235,8 +235,8 @@
             wordaudiourls.push({word,objectUrl});
         }
         const dat = new FormData();
-        dat.append("word", word);    
-        
+        dat.append("word", word);
+
         //send request
         request.send(dat);
     }
@@ -255,7 +255,7 @@
             reftext.innerText = reftextval;
 
         }
-        
+
         //send request
         request.send();
 
@@ -264,7 +264,7 @@
 
     //function for handling main button clicks
     document.getElementById('buttonmic').onclick = function () {
-       
+
         if (reftext.value.length == 0){
             alert("Reference Text cannot be empty!");
         }
@@ -279,10 +279,10 @@
                 this.innerHTML = "<span class='fa fa-refresh'></span>Refresh";
                 this.className = "green-button";
                 rec.stop();
-    
+
                 //stop microphone access
                 gumStream.getAudioTracks()[0].stop();
-    
+
                 //create the wav blob and pass it on to createDownloadLink
                 rec.exportWAV(createDownloadLink);
             }
@@ -299,13 +299,13 @@
                 ttbutton.disabled = true;
                 ttbutton.className = "btn";
                 reftextval = reftext.value;
-    
+
                 this.innerHTML = "<span class='fa fa-stop'></span>Stop";
                 this.className = "red-button";
             }
         }
         };
-        
+
 
     function fillDetails(words){
         for (var wi in words){
@@ -315,7 +315,7 @@
             if(w.ErrorType == "Omission"){
                 omittedwords += w.Word;
                 omittedwords += ', ';
-                
+
                 var tdda = document.createElement('td');
                 tdda.innerText = '-';
                 phonemerow.appendChild(tdda);
@@ -326,7 +326,7 @@
 
                 var tdw = document.createElement('td');
                 tdw.innerText = w.Word;
-                tdw.style.backgroundColor = "orange"; 
+                tdw.style.backgroundColor = "orange";
                 wordrow.appendChild(tdw);
             }
             else if(w.ErrorType == "Insertion"){
@@ -340,16 +340,16 @@
                     var tdp = document.createElement('td');
                     tdp.innerText = p.Phoneme;
                     if(p.AccuracyScore >= phthreshold1){
-                        tdp.style.backgroundColor = "green";  
+                        tdp.style.backgroundColor = "green";
                     }
                     else if(p.AccuracyScore >= phthreshold2){
-                        tdp.style.backgroundColor = "lightgreen";  
+                        tdp.style.backgroundColor = "lightgreen";
                     }
                     else if(p.AccuracyScore >= phthreshold3){
-                        tdp.style.backgroundColor = "yellow";  
+                        tdp.style.backgroundColor = "yellow";
                     }
                     else{
-                        tdp.style.backgroundColor = "red"; 
+                        tdp.style.backgroundColor = "red";
                     }
                     phonemerow.appendChild(tdp);
 
@@ -366,13 +366,13 @@
                 tdw.appendChild(x);
                 tdw.colSpan = countp;
                 if(w.ErrorType == "None"){
-                    tdw.style.backgroundColor = "lightgreen";  
+                    tdw.style.backgroundColor = "lightgreen";
                 }
                 else{
-                    tdw.style.backgroundColor = "red";  
+                    tdw.style.backgroundColor = "red";
                 }
                 wordrow.appendChild(tdw);
-            }            
+            }
 
         }
     }
@@ -397,35 +397,37 @@
     function createDownloadLink(blob) {
 
         document.getElementById("recordloader").style.display = "block";
-        
+
         document.getElementById("footeralert").style.display = "none";
         var url = URL.createObjectURL(blob);
         var au = document.createElement('audio');
         var li = document.createElement('p');
         var link = document.createElement('a');
-    
+
         //name of .wav file to use during upload and download (without extendion)
         var filename = new Date().toISOString();
-    
+
         //add controls to the <audio> element
         au.controls = true;
         au.src = url;
-    
+
         //add the new audio element to li
         li.appendChild(au);
-            
+
         //add the li element to the ol
         recordingsList.appendChild(li);
 
         var request = new XMLHttpRequest();
         request.open('POST', '/ackaud', true);
 
+
+
         // Callback function for when request completes
         request.onload = () => {
             // Extract JSON data from request
 
             const data = JSON.parse(request.responseText);
-            
+
             if(data.RecognitionStatus == "Success") {
                 fillData(data.NBest[0]);
                 document.getElementById("recordloader").style.display = "none";
@@ -437,13 +439,19 @@
                 console.log(data.RecognitionStatus);
             }
         }
+
+
+        const language = document.getElementById('languageSelector').value;
         // Add data to send with request
         const data = new FormData();
         data.append("audio_data",blob, filename);
-        data.append("reftext",reftextval);            
+        data.append("reftext",reftextval);
+        data.append("language", language)
+
+        console.log(language);
 
         //send request
         request.send(data);
-        
-        return false;        
+
+        return false;
     }

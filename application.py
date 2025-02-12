@@ -90,6 +90,8 @@ def getstory():
 def ackaud():
     f = request.files['audio_data']
     reftext = request.form.get("reftext")
+    language = request.form.get("language")
+    print(language)
     #    f.save(audio)
     #print('file uploaded successfully')
 
