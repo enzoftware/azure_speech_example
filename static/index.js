@@ -203,7 +203,11 @@
                 document.getElementById("ttsloader").style.display = "none";
             }
             const dat = new FormData();
+            var language = document.getElementById('languageSelector').value;
             dat.append("reftext",reftextval);
+            dat.append("language", language);
+
+            console.log(language);
 
             //send request
             request.send(dat);
@@ -217,6 +221,7 @@
 
         }
         else{
+            alert("TTS Audio for given text already exists. You may change ref text");
             console.log("TTS Audio for given text already exists. You may change ref text");
         }
 
@@ -241,10 +246,13 @@
         request.send(dat);
     }
 
+
+
     //function for onclick of get tongue twister button
     ttbutton.onclick = function () {
         var request = new XMLHttpRequest();
         request.open('POST', '/gettonguetwister', true);
+
 
         // Callback function for when request completes
         request.onload = () => {
@@ -256,8 +264,11 @@
 
         }
 
-        //send request
-        request.send();
+        const language = document.getElementById('languageSelector').value;
+
+        const data = new FormData();
+        data.append("language", language)
+        request.send(data);
 
         return false;
     }

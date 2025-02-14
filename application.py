@@ -35,24 +35,59 @@ def gettoken():
 
 @app.route("/gettonguetwister", methods=["POST"])
 def gettonguetwister():
-    tonguetwisters = ["How much wood would a woodchuck chuck if a woodchuck could chuck wood?",
+    language = request.form.get("language")
+    print(language)
+    tonguetwisters = {
+        "en-US": [
+            "How much wood would a woodchuck chuck if a woodchuck could chuck wood?",
             "She sells seashells by the seashore.",
             "We surely shall see the sun shine soon.",
-            "Lesser leather never weathered wetter weather better.",
             "I scream, you scream, we all scream for ice cream.",
-            "Susie works in a shoeshine shop. Where she shines she sits, and where she sits she shines.",
-            "Six sticky skeletons. Six sticky skeletons. Six sticky skeletons.",
-            "Black back bat. Black back bat. Black back bat.",
-            "She sees cheese. She sees cheese. She sees cheese.",
-            "Two tried and true tridents. Two tried and true tridents. Two tried and true tridents.",
-            "Thin sticks, thick bricks. Thin sticks, thick bricks. Thin sticks, thick bricks.",
-            "Truly rural. Truly rural. Truly rural.",
-            "Black background, brown background",
-            "Blue blood, bad blood. Blue blood, bad blood. Blue blood, bad blood.",
-            "Red lorry, yellow lorry. Red lorry, yellow lorry. Red lorry, yellow lorry.",
-            "I slit the sheet, the sheet I slit, and on the slitted sheet I sit"]
+            "Red lorry, yellow lorry.",
+            "Thin sticks, thick bricks.",
+            "Susie works in a shoeshine shop. Where she shines she sits, and where she sits she shines."
+        ],
+        "es-ES": [
+            "Tres tristes tigres tragan trigo en un trigal.",
+            "El perro de San Roque no tiene rabo porque Ramón Ramírez se lo ha cortado.",
+            "Pablito clavó un clavito en la calva de un calvito.",
+            "Pepe pecas pica papas con un pico y una pala.",
+            "El cielo está enladrillado, quién lo desenladrillará?",
+            "Mi mamá me mima mucho."
+        ],
+        "ko-KR": [
+            "간장 공장 공장장은 강 공장장이고 된장 공장 공장장은 장 공장장이다.",
+            "고양이야 미안해 미안해 고양이야.",
+            "철수 철쭉 철쭉 철수.",
+            "오리 오리 오리.",
+            "잘 자라, 잘 자라, 잘 자라.",
+            "저기 저 사자가 사자 같다.",
+            "감자 깎아 감자."
+        ],
+        "ja-JP": [
+            "生麦生米生卵",
+            "赤巻紙青巻紙黄巻紙",
+            "東京特許許可局",
+            "バスガス爆発",
+            "隣の客はよく柿食う客だ",
+            "坊主が屏風に上手に坊主の絵を描いた",
+            "この竹垣に竹立てかけたのは、竹立てかけたかったから竹立てかけた"
+        ],
+        "zh-CN": [
+            "四是四，十是十，十四是十四，四十是四十。",
+            "吃葡萄不吐葡萄皮，不吃葡萄倒吐葡萄皮。",
+            "天上天，下雨不愁；地下水，涨得满流。",
+            "黑化肥发灰，灰化肥发黑。",
+            "吃饭不忘种田，种田不忘吃饭。",
+            "板凳长，板凳宽，板凳上面坐个胖胖胖胖。",
+            "山前有个严岩，严岩背后有眼盐。"
+        ]
+    }
 
-    return jsonify({"tt":random.choice(tonguetwisters)})
+    if language not in tonguetwisters:
+        return jsonify({"error": "Language not supported"}), 400
+
+    return jsonify({"tt": random.choice(tonguetwisters[language])})
 
 @app.route("/getstory", methods=["POST"])
 def getstory():
@@ -140,9 +175,21 @@ def ackaud():
 @app.route("/gettts", methods=["POST"])
 def gettts():
     reftext = request.form.get("reftext")
+    language = request.form.get("language")
+
+    # Mapping of languages to their respective voice names
+    language_to_voice = {
+        "en-US": "Microsoft Server Speech Text to Speech Voice (en-US, JennyNeural)",
+        "es-ES": "Microsoft Server Speech Text to Speech Voice (es-ES, ElviraNeural)",
+        "ja-JP": "Microsoft Server Speech Text to Speech Voice (ja-JP, NanamiNeural)",
+        "ko-KR": "Microsoft Server Speech Text to Speech Voice (ko-KR, SunHiNeural)",
+        "zh-CN": "Microsoft Server Speech Text to Speech Voice (zh-CN, XiaoxiaoNeural)",
+    }
+
     # Creates an instance of a speech config with specified subscription key and service region.
     speech_config = speechsdk.SpeechConfig(subscription=subscription_key, region=region)
-    speech_config.speech_synthesis_voice_name = voice
+    speech_config.speech_synthesis_voice_name = language_to_voice.get(language, language_to_voice[language])
+
 
     offsets=[]
 
